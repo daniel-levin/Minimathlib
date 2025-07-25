@@ -1,0 +1,10 @@
+name = "Minimathlib"
+version = "0.1.0"
+defaultTargets = ["minimathlib"]
+
+[[lean_lib]]
+name = "Minimathlib"
+
+[[lean_exe]]
+name = "minimathlib"
+root = "Main"
