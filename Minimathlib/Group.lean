@@ -1,4 +1,4 @@
-universe u
+universe u v
 
 -- Reference: Advanced Modern Algebra - Rotman
 
@@ -66,3 +66,7 @@ theorem identity_unique4 (d : G) (h1 : ∀ x : G, d * x = x): d = e := by
   assumption
 
 end rotman_lemma_2_16
+
+class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
+  map: G → H
+  homs: ∀ a b : G, map (a*b) = map a * map b
