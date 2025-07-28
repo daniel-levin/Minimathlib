@@ -6,6 +6,7 @@ variable {α : Type u}
 -- This definition is lifted almost verbatim from Mathlib.
 -- Despite being the foundation of a _mathematics_ library, Lean has no notion of sets.
 -- Instead, we will develop a satisfactory naive set theory in the language of Lean.
+-- In this case, a set is just defined as its characteristic function over the underlying type and with a Prop as an output, rather than 0 or 1.
 def Set (X : Type u) : Type u := X → Prop
 
 namespace Set
@@ -46,6 +47,8 @@ infixl:70 " ∩ " => Set.inter
 infixl:65 " ∪ " => Set.union
 postfix:max "ᶜ" => Set.compl
 notation "⋃ " f => Set.iUnion f
+
+theorem useful_notation: 1 ∈ 𝒰 := by trivial
 
 -- https://lean-lang.org/doc/reference/latest//The-Type-System/Functions/#function-extensionality
 -- What Halmos calls "the axiom of extensionality" is a straight-forward restatement of the `funext` theorem.
