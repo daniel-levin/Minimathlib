@@ -1,4 +1,4 @@
-universe u
+universe u v
 variable {α : Type u}
 
 -- Sets as characteristic functions (predicates)
@@ -24,6 +24,19 @@ variable {α : Type u}
 -- 5. Type-safe: impossible to have membership between incompatible types
 --    Example: can't ask if "hello" ∈ (Set ℕ), prevented at compile time
 def Set (X : Type u) : Type u := X → Prop
+
+theorem extensional {β : α → Sort v} {f g : (x : α) → β x}
+  (h :  ∀ (x : α), f x = g x) : f = g := by
+    funext x
+    exact h x
+
+theorem extensional2 {β : α → Sort v} {f g : (x : α) → β x}
+  (h: f = g): ∀ (x : α), f x = g x := by
+  exact fun x => congrFun h x
+
+theorem extensionality {β : α → Sort v} {f g : (x : α) → β x} :
+    f = g ↔ ∀ (x : α), f x = g x :=
+    ⟨extensional2, extensional⟩
 
 namespace Set
 
