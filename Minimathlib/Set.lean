@@ -53,8 +53,8 @@ theorem useful_notation: 1 ∈ 𝒰 := by trivial
 -- https://lean-lang.org/doc/reference/latest//The-Type-System/Functions/#function-extensionality
 -- What Halmos calls "the axiom of extensionality" is a straight-forward restatement of the `funext` theorem.
 theorem ext {a b : Set α} (h : ∀ (x : α), x ∈ a ↔ x ∈ b) : a = b := by
-  funext placeholder
-  have h0 := propext (h placeholder)
+  have q := λ x => propext (h x)
+  have r := funext q
   assumption
 
 theorem compl_empty {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
