@@ -80,6 +80,18 @@ theorem mul_inv_rev (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
   apply left_cancellation_law _ _ (a * b)
   rw [mul_inv, ← mul_assoc, mul_assoc a, mul_inv, mul_one, mul_inv]
 
+-- Term-mode proof of the same theorem
+theorem mul_inv_rev_term (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
+  left_cancellation_law _ _ (a * b)
+    (calc (a * b) * (a * b)⁻¹
+      = e                     := mul_inv (a * b)
+    _ = (a * b) * (b⁻¹ * a⁻¹) := Eq.symm (calc (a * b) * (b⁻¹ * a⁻¹)
+        = a * (b * (b⁻¹ * a⁻¹))     := mul_assoc a b (b⁻¹ * a⁻¹)
+      _ = a * (b * b⁻¹ * a⁻¹)       := congrArg (a * ·) (Eq.symm (mul_assoc b b⁻¹ a⁻¹))
+      _ = a * (e * a⁻¹)             := congrArg (a * ·) (congrArg (· * a⁻¹) (mul_inv b))
+      _ = a * a⁻¹                   := congrArg (a * ·) (one_mul a⁻¹)
+      _ = e                         := mul_inv a))
+
 class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
   map: G → H
   homs: ∀ a b : G, map (a*b) = map a * map b
