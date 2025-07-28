@@ -49,7 +49,6 @@ theorem identity_unique (d : G) (h : ∀ x : G, d * x = x ∧ x * d = x) : d = e
     rw [mul_one] at this
     exact this
 
-
 theorem identity_unique2 (d : G) (h: ∀ x : G, d * x = x ∧ x * d = x) : d = e := by
   have k := (h e).1
   rw [mul_one] at k
@@ -76,6 +75,17 @@ theorem no_nonidentity_self_square (a : G) (h: a*a = a): a = e := by
 theorem no_nonidentity_self_square2 (a : G): a * a = a → a = e := by
   intro h
   exact no_nonidentity_self_square a h
+
+theorem mul_inv_rev (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
+  have x := congrArg (. * a⁻¹) (congrArg (. * b⁻¹) (inv_mul (a * b)))
+  simp at x
+  conv at x =>
+    lhs
+    congr
+    repeat rw [mul_assoc]
+    rw [mul_inv b, mul_one]
+  rw [mul_assoc, mul_inv, mul_one, one_mul] at x
+  assumption
 
 class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
   map: G → H
