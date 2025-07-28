@@ -1,46 +1,14 @@
 universe u v
 variable {α : Type u}
 
--- Sets as characteristic functions (predicates)
--- A set is represented as a function from elements to propositions
--- For any element x : X, the set s contains x iff (s x) is true
--- This is equivalent to the mathematical notion of a characteristic function
--- χ_S(x) = True if x ∈ S, False otherwise
---
--- Examples:
--- • evens : (set of even natural numbers)
--- • primes : Set ℕ := fun n => Nat.Prime n  (set of prime numbers)
--- • interval : Set ℝ := fun x => 0 ≤ x ∧ x ≤ 1  (unit interval [0,1])
---
--- Benefits of this representation:
--- 1. Natural: membership is just function application (s x)
---    Example: (evens 4) evaluates to True, (evens 3) evaluates to False
--- 2. Extensional: two sets are equal iff they have the same members
---    Example: fun n => n < 5 = fun n => n ∈ {0,1,2,3,4} by funext
--- 3. Higher-order: can quantify over sets, define families of sets
---    Example: ∀ s : Set ℕ, s ⊆ univ (all sets are subsets of the universal set)
--- 4. Uniform: all set operations reduce to logical operations on predicates
---    Example: (s ∩ t) x = s x ∧ t x, (s ∪ t) x = s x ∨ t x
--- 5. Type-safe: impossible to have membership between incompatible types
---    Example: can't ask if "hello" ∈ (Set ℕ), prevented at compile time
+-- See also: Halmos's Naive Set Theory.
+
+-- This definition is lifted almost verbatim from Mathlib.
+-- Despite being the foundation of a _mathematics_ library, Lean has no notion of sets.
+-- Instead, we will develop a satisfactory naive set theory in the language of Lean.
 def Set (X : Type u) : Type u := X → Prop
 
-theorem extensional {β : α → Sort v} {f g : (x : α) → β x}
-  (h :  ∀ (x : α), f x = g x) : f = g := by
-    funext x
-    exact h x
-
-theorem extensional2 {β : α → Sort v} {f g : (x : α) → β x}
-  (h: f = g): ∀ (x : α), f x = g x := by
-  exact fun x => congrFun h x
-
-theorem extensionality {β : α → Sort v} {f g : (x : α) → β x} :
-    f = g ↔ ∀ (x : α), f x = g x :=
-    ⟨extensional2, extensional⟩
-
 namespace Set
-
-def evens : Set Nat := fun n => n % 2 = 0
 
 -- The empty set: no element satisfies the predicate
 -- Example: ∅ : Set ℕ means fun n => False (no natural number is in ∅)
@@ -68,11 +36,9 @@ def compl {X : Type u} (s : Set X) : Set X := fun x => ¬s x
 -- (⋃ intervals) x = ∃ i, intervals i x = ∃ i, i ≤ x ∧ x ≤ i+1 (covers all reals)
 def iUnion {X : Type u} {ι : Type u} (s : ι → Set X) : Set X := fun x => ∃ i, s i x
 
-protected def Mem (s : Set α) (a : α) : Prop :=
-  s a
+protected def Mem (s : Set α) (a : α) : Prop := s a
 
-instance : Membership α (Set α) :=
-  ⟨Set.Mem⟩
+instance : Membership α (Set α) := ⟨Set.Mem⟩
 
 notation "∅" => Set.empty
 notation "𝒰" => Set.univ
@@ -81,9 +47,12 @@ infixl:65 " ∪ " => Set.union
 postfix:max "ᶜ" => Set.compl
 notation "⋃ " f => Set.iUnion f
 
-theorem hmmm (a : α): a ∈ Set.univ := by trivial
-
-theorem one_is_in_set_nat : 1 ∈ 𝒰 := by trivial
+-- https://lean-lang.org/doc/reference/latest//The-Type-System/Functions/#function-extensionality
+-- What Halmos calls "the axiom of extensionality" is a straight-forward restatement of the `funext` theorem.
+theorem ext {a b : Set α} (h : ∀ (x : α), x ∈ a ↔ x ∈ b) : a = b := by
+  funext placeholder
+  have h0 := propext (h placeholder)
+  assumption
 
 theorem compl_empty {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
   funext x
