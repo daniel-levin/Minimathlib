@@ -67,6 +67,12 @@ theorem identity_unique4 (d : G) (h1 : ∀ x : G, d * x = x): d = e := by
 
 end rotman_lemma_2_16
 
+theorem no_nonidentity_self_square (a : G) (h: a*a = a): a = e := by
+  have l := congrArg (. * a⁻¹) h
+  simp at l
+  rw [mul_assoc, mul_inv, mul_one] at l
+  assumption
+
 class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
   map: G → H
   homs: ∀ a b : G, map (a*b) = map a * map b
