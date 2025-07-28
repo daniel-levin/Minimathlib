@@ -73,6 +73,10 @@ theorem no_nonidentity_self_square (a : G) (h: a*a = a): a = e := by
   rw [mul_assoc, mul_inv, mul_one] at l
   assumption
 
+theorem no_nonidentity_self_square2 (a : G): a * a = a → a = e := by
+  intro h
+  exact no_nonidentity_self_square a h
+
 class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
   map: G → H
   homs: ∀ a b : G, map (a*b) = map a * map b
