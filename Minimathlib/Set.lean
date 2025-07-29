@@ -7,6 +7,7 @@ variable {α : Type u}
 -- Despite being the foundation of a _mathematics_ library, Lean has no notion of sets.
 -- Instead, we will develop a satisfactory naive set theory in the language of Lean.
 -- In this case, a set is just defined as its characteristic function over the underlying type and with a Prop as an output, rather than 0 or 1.
+-- This corresponds to the "axiom of specification".
 def Set (X : Type u) : Type u := X → Prop
 
 namespace Set
@@ -50,8 +51,8 @@ notation "⋃ " f => Set.iUnion f
 
 theorem useful_notation: 1 ∈ 𝒰 := by trivial
 
+-- Functions in Lean are intensional, which means we need to prove that Set satisfies the axiom of extensionality.
 -- https://lean-lang.org/doc/reference/latest//The-Type-System/Functions/#function-extensionality
--- What Halmos calls "the axiom of extensionality" is a straight-forward restatement of the `funext` theorem.
 theorem ext {a b : Set α} (h : ∀ (x : α), x ∈ a ↔ x ∈ b) : a = b := by
   have q := λ x => propext (h x)
   have r := funext q
@@ -60,6 +61,14 @@ theorem ext {a b : Set α} (h : ∀ (x : α), x ∈ a ↔ x ∈ b) : a = b := by
 theorem compl_empty {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
   funext x
   simp [compl, empty, univ]
+
+theorem compl_empty2 {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
+  funext x
+  rw [Set.compl, Set.empty, Set.univ, not_false_eq_true]
+
+theorem compl_empty3 {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
+  unfold Set.univ Set.empty Set.compl
+  rw [← not_false_iff]
 
 theorem compl_univ {X : Type u} : (𝒰 : Set X)ᶜ = ∅ := by
   funext x
@@ -108,5 +117,17 @@ theorem compl_inter {X : Type u} (s t : Set X) : (s ∩ t)ᶜ = sᶜ ∪ tᶜ :=
     cases h with
     | inl h => exact h hs  -- If h : ¬s x, then h contradicts hs : s x
     | inr h => exact h ht  -- If h : ¬t x, then h contradicts ht : t x
+
+theorem compl_inter2 {X : Type u} (s t : Set X) : (s ∩ t)ᶜ = sᶜ ∪ tᶜ := by
+  unfold Set.compl Set.inter Set.union
+  grind
+
+theorem compl_union {X : Type u} (s t : Set X) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ := by
+  unfold Set.compl Set.inter Set.union
+  grind
+
+theorem compl_union_three {X : Type u} (r s t: Set X) : (r ∪ s ∪ t)ᶜ = rᶜ ∩ sᶜ ∩ tᶜ := by
+  unfold Set.compl Set.inter Set.union
+  grind
 
 end Set
