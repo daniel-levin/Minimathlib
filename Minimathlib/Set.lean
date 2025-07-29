@@ -49,6 +49,15 @@ infixl:65 " ∪ " => Set.union
 postfix:max "ᶜ" => Set.compl
 notation "⋃ " f => Set.iUnion f
 
+macro "ode_to_grind" : tactic =>
+    `(tactic| (
+      try unfold Set.compl
+      try unfold Set.inter
+      try unfold Set.union
+      try unfold Set.empty
+      try unfold Set.univ
+      grind))
+
 theorem useful_notation: 1 ∈ 𝒰 := by trivial
 
 -- Functions in Lean are intensional, which means we need to prove that Set satisfies the axiom of extensionality.
@@ -58,21 +67,13 @@ theorem ext {a b : Set α} (h : ∀ (x : α), x ∈ a ↔ x ∈ b) : a = b := by
   have r := funext q
   assumption
 
-theorem compl_empty {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
-  unfold Set.compl Set.univ Set.empty
-  grind
+theorem compl_empty {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by ode_to_grind
 
-theorem compl_univ {X : Type u} : (𝒰 : Set X)ᶜ = ∅ := by
-  unfold Set.compl Set.univ Set.empty
-  grind
+theorem compl_univ {X : Type u} : (𝒰 : Set X)ᶜ = ∅ := by ode_to_grind
 
-theorem compl_inter {X : Type u} (s t : Set X) : (s ∩ t)ᶜ = sᶜ ∪ tᶜ := by
-  unfold Set.compl Set.inter Set.union
-  grind
+theorem compl_inter {X : Type u} (s t : Set X) : (s ∩ t)ᶜ = sᶜ ∪ tᶜ := by ode_to_grind
 
-theorem compl_union {X : Type u} (s t : Set X) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ := by
-  unfold Set.compl Set.inter Set.union
-  grind
+theorem compl_union {X : Type u} (s t : Set X) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ := by ode_to_grind
 
 
 end Set
