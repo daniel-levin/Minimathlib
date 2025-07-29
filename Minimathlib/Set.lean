@@ -49,6 +49,11 @@ infixl:65 " ∪ " => Set.union
 postfix:max "ᶜ" => Set.compl
 notation "⋃ " f => Set.iUnion f
 
+-- Basic subset relation
+def subset (s t : Set X) : Prop := ∀ x, x ∈ s → x ∈ t
+
+infixl:50 " ⊆ " => subset
+
 macro "ode_to_grind" : tactic =>
     `(tactic| (
       try unfold Set.compl

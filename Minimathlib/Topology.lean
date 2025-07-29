@@ -31,15 +31,11 @@ open TopologicalSpace
 
 -- De Morgan's laws for closed sets
 theorem isClosed_iUnion : ∀ {ι : Type u} (s : ι → Set X), (∀ i, isClosed (s i)) → isClosed (⋃ s) := by
+  intro ι s i
   sorry
 
 theorem isClosed_union : ∀ s t : Set X, isClosed s → isClosed t → isClosed (s ∪ t) := by
   sorry
-
--- Basic subset relation
-def subset (s t : Set X) : Prop := ∀ x, x ∈ s → x ∈ t
-
-infixl:50 " ⊆ " => subset
 
 -- Neighborhood definitions and properties
 def nhds (x : X) : Set (Set X) := fun s => ∃ t, isOpen t ∧ x ∈ t ∧ t ⊆ s
