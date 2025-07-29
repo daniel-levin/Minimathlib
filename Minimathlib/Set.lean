@@ -38,6 +38,11 @@ def compl {X : Type u} (s : Set X) : Set X := fun x => ¬s x
 -- (⋃ intervals) x = ∃ i, intervals i x = ∃ i, i ≤ x ∧ x ≤ i+1 (covers all reals)
 def iUnion {X : Type u} {ι : Type u} (s : ι → Set X) : Set X := fun x => ∃ i, s i x
 
+-- Indexed intersection: element is in all sets from the family
+-- Example: if halflines i := fun x => x ≥ i, then
+-- (⋂ halflines) x = ∀ i, halflines i x = ∀ i, x ≥ i (only satisfied by no real number)
+def iInter {X : Type u} {ι : Type u} (s : ι → Set X) : Set X := fun x => ∀ i, s i x
+
 protected def Mem (s : Set α) (a : α) : Prop := s a
 
 instance : Membership α (Set α) := ⟨Set.Mem⟩
@@ -48,6 +53,7 @@ infixl:70 " ∩ " => Set.inter
 infixl:65 " ∪ " => Set.union
 postfix:max "ᶜ" => Set.compl
 notation "⋃ " f => Set.iUnion f
+notation "⋂ " f => Set.iInter f
 
 -- Basic subset relation
 def subset (s t : Set X) : Prop := ∀ x, x ∈ s → x ∈ t
@@ -79,6 +85,41 @@ theorem compl_univ {X : Type u} : (𝒰 : Set X)ᶜ = ∅ := by ode_to_grind
 theorem compl_inter {X : Type u} (s t : Set X) : (s ∩ t)ᶜ = sᶜ ∪ tᶜ := by ode_to_grind
 
 theorem compl_union {X : Type u} (s t : Set X) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ := by ode_to_grind
+
+-- De Morgan's laws for indexed unions and intersections
+theorem compl_iUnion {X : Type u} {ι : Type u} (s : ι → Set X) : (⋃ s)ᶜ = ⋂ (fun i => (s i)ᶜ) := by
+  apply ext
+  intro x
+  constructor
+  · intro h i hi
+    -- h : ¬∃ i, s i x, hi : s i x, goal: False
+    exact h ⟨i, hi⟩
+  · intro h ⟨i, hi⟩
+    -- h : ∀ i, ¬s i x, hi : s i x, goal: False
+    exact h i hi
+
+theorem compl_iInter {X : Type u} {ι : Type u} (s : ι → Set X) : (⋂ s)ᶜ = ⋃ (fun i => (s i)ᶜ) := by
+  apply ext
+  intro x
+  constructor
+  · intro h
+    -- h : ¬∀ i, s i x, goal: ∃ i, ¬s i x
+    -- Use classical logic via excluded middle
+    classical
+    have em : (∃ i, ¬s i x) ∨ ¬(∃ i, ¬s i x) := Classical.em (∃ i, ¬s i x)
+    cases em with
+    | inl hex => exact hex
+    | inr hnex =>
+      -- hnex : ¬∃ i, ¬s i x, which means ∀ i, s i x
+      exfalso
+      apply h
+      intro i
+      -- Need to show s i x from ¬∃ i, ¬s i x
+      have : ¬¬s i x := fun hi => hnex ⟨i, hi⟩
+      exact Classical.not_not.mp this
+  · intro ⟨i, hi⟩ h
+    -- hi : ¬s i x, h : ∀ i, s i x, goal: False
+    exact hi (h i)
 
 
 end Set
