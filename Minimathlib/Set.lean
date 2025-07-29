@@ -59,66 +59,14 @@ theorem ext {a b : Set α} (h : ∀ (x : α), x ∈ a ↔ x ∈ b) : a = b := by
   assumption
 
 theorem compl_empty {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
-  funext x
-  simp [compl, empty, univ]
-
-theorem compl_empty2 {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
-  funext x
-  rw [Set.compl, Set.empty, Set.univ, not_false_eq_true]
-
-theorem compl_empty3 {X : Type u} : (∅ : Set X)ᶜ = 𝒰 := by
-  unfold Set.univ Set.empty Set.compl
-  rw [← not_false_iff]
+  unfold Set.compl Set.univ Set.empty
+  grind
 
 theorem compl_univ {X : Type u} : (𝒰 : Set X)ᶜ = ∅ := by
-  funext x
-  simp [compl, empty, univ]
+  unfold Set.compl Set.univ Set.empty
+  grind
 
--- De Morgan's law: complement of intersection equals union of complements
 theorem compl_inter {X : Type u} (s t : Set X) : (s ∩ t)ᶜ = sᶜ ∪ tᶜ := by
-  -- Two sets are equal if they contain the same elements
-  -- funext proves equality of functions by proving pointwise equality
-  funext x
-
-  -- Unfold definitions: compl, inter, union
-  -- This transforms the goal to: ¬(s x ∧ t x) = (¬s x ∨ ¬t x)
-  simp only [compl, inter, union]
-
-  -- Convert propositional equality to logical equivalence (iff)
-  -- We need this because = on Prop means iff, but we need to prove it
-  apply propext
-
-  -- Split the iff into two directions: → and ←
-  constructor
-
-  -- First direction: ¬(s x ∧ t x) → (¬s x ∨ ¬t x)
-  -- If x is not in both sets, then x is not in at least one set
-  · intro h  -- h : ¬(s x ∧ t x)
-    -- Case analysis on whether x ∈ s
-    by_cases h1 : s x
-
-    -- Case 1: x ∈ s, so if x were also in t, we'd have s x ∧ t x, contradicting h
-    · right  -- We'll prove ¬t x
-      intro ht  -- Assume t x
-      -- But then we have s x ∧ t x (since h1 : s x and ht : t x)
-      exact h ⟨h1, ht⟩  -- This contradicts h : ¬(s x ∧ t x)
-
-    -- Case 2: x ∉ s, so we can immediately conclude ¬s x ∨ ¬t x
-    · left   -- We'll prove ¬s x
-      exact h1  -- h1 : ¬s x is exactly what we need
-
-  -- Second direction: (¬s x ∨ ¬t x) → ¬(s x ∧ t x)
-  -- If x is not in at least one set, then x is not in both sets
-  · intro h  -- h : ¬s x ∨ ¬t x
-    -- To prove ¬(s x ∧ t x), assume s x ∧ t x and derive contradiction
-    intro ⟨hs, ht⟩  -- Assume both s x and t x
-
-    -- Case analysis on which disjunct of h holds
-    cases h with
-    | inl h => exact h hs  -- If h : ¬s x, then h contradicts hs : s x
-    | inr h => exact h ht  -- If h : ¬t x, then h contradicts ht : t x
-
-theorem compl_inter2 {X : Type u} (s t : Set X) : (s ∩ t)ᶜ = sᶜ ∪ tᶜ := by
   unfold Set.compl Set.inter Set.union
   grind
 
@@ -126,8 +74,5 @@ theorem compl_union {X : Type u} (s t : Set X) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ :=
   unfold Set.compl Set.inter Set.union
   grind
 
-theorem compl_union_three {X : Type u} (r s t: Set X) : (r ∪ s ∪ t)ᶜ = rᶜ ∩ sᶜ ∩ tᶜ := by
-  unfold Set.compl Set.inter Set.union
-  grind
 
 end Set
