@@ -37,7 +37,9 @@ theorem isClosed_iInter : ∀ {ι : Type u} (s : ι → Set X), (∀ i, isClosed
   rw [Set.compl_iInter]
   -- Goal: isOpen (⋃ (fun i => (s i)ᶜ))
   -- Each (s i)ᶜ is open since s i is closed
-  sorry
+  apply isOpen_union
+  intro i
+  exact h i
 
 theorem isClosed_union : ∀ s t : Set X, isClosed s → isClosed t → isClosed (s ∪ t) := by
   intro s t hs ht
@@ -69,13 +71,20 @@ theorem subset_closure : ∀ s : Set X, s ⊆ closure s := by
   sorry
 
 theorem interior_subset : ∀ s : Set X, interior s ⊆ s := by
-  sorry
+  intro s x hx
+  unfold interior at hx
+  -- hx : ∃ t, isOpen t ∧ t ⊆ s ∧ x ∈ t
+  obtain ⟨t, _, hsub, hxt⟩ := hx
+  -- hsub : t ⊆ s, hxt : x ∈ t, goal: x ∈ s
+  exact hsub x hxt
 
 -- Dense sets
 def dense (s : Set X) : Prop := closure s = 𝒰
 
 theorem dense_iff_closure : ∀ s : Set X, dense s ↔ closure s = 𝒰 := by
-  sorry
+  intro s
+  -- This is trivial since dense is defined as closure s = 𝒰
+  rfl
 
 -- Preimage of a function
 def preimage {Y : Type u} (f : X → Y) (s : Set Y) : Set X := fun x => s (f x)
@@ -94,7 +103,8 @@ def homeomorphism {Y : Type u} [TopologicalSpace Y] (f : X → Y) : Prop :=
 
 theorem homeomorphism_equiv {Y : Type u} [TopologicalSpace Y]
   (f : X → Y) : homeomorphism f ↔ continuous f ∧ ∃ g : Y → X, continuous g ∧ (∀ y, f (g y) = y) ∧ (∀ x, g (f x) = x) := by
-  sorry
+  -- This is trivial since it's exactly the definition of homeomorphism
+  rfl
 
 -- Nonempty predicate for sets
 def nonempty (s : Set X) : Prop := ∃ x, x ∈ s
