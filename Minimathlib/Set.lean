@@ -69,7 +69,7 @@ macro "ode_to_grind" : tactic =>
       try unfold Set.univ
       grind))
 
-theorem useful_notation: 1 ∈ 𝒰 := by trivial
+example : 1 ∈ 𝒰 := by trivial
 
 -- Functions in Lean are intensional, which means we need to prove that Set satisfies the axiom of extensionality.
 -- https://lean-lang.org/doc/reference/latest//The-Type-System/Functions/#function-extensionality

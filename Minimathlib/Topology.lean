@@ -29,25 +29,19 @@ theorem isClosed_univ : isClosed (𝒰 : Set X) := by
 
 open TopologicalSpace
 
--- Correct theorems for closed sets
 theorem isClosed_iInter : ∀ {ι : Type u} (s : ι → Set X), (∀ i, isClosed (s i)) → isClosed (⋂ s) := by
   intro ι s h
   unfold isClosed
-  -- Goal: isOpen (⋂ s)ᶜ
   rw [Set.compl_iInter]
-  -- Goal: isOpen (⋃ (fun i => (s i)ᶜ))
-  -- Each (s i)ᶜ is open since s i is closed
   apply isOpen_union
-  intro i
-  exact h i
+  assumption
 
 theorem isClosed_union : ∀ s t : Set X, isClosed s → isClosed t → isClosed (s ∪ t) := by
   intro s t hs ht
   unfold isClosed
   rw [Set.compl_union]
   apply isOpen_inter
-  · exact hs
-  · exact ht
+  repeat assumption
 
 -- Neighborhood definitions and properties
 def nhds (x : X) : Set (Set X) := fun s => ∃ t, isOpen t ∧ x ∈ t ∧ t ⊆ s
