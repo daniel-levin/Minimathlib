@@ -6,8 +6,7 @@ variable {α : Type u}
 -- This definition is lifted almost verbatim from Mathlib.
 -- Despite being the foundation of a _mathematics_ library, Lean has no notion of sets.
 -- Instead, we will develop a satisfactory naive set theory in the language of Lean.
--- In this case, a set is just defined as its characteristic function over the underlying type and with a Prop as an output, rather than 0 or 1.
--- This corresponds to the "axiom of specification".
+-- This definition corresponds to the "axiom of specification".
 def Set (X : Type u) : Type u := X → Prop
 
 example : Set Nat := fun n => n > 5
@@ -43,7 +42,6 @@ def union {X : Type u} (s t : Set X) : Set X := fun x => s x ∨ t x
 -- Example: if pos := fun n => n > 0, then posᶜ x = ¬(pos x) = ¬(x > 0) = x ≤ 0
 def compl {X : Type u} (s : Set X) : Set X := fun x => ¬s x
 
-
 -- Indexed union: element is in at least one set from the family
 -- Example: if intervals i := fun x => i ≤ x ∧ x ≤ i+1, then
 -- (⋃ intervals) x = ∃ i, intervals i x = ∃ i, i ≤ x ∧ x ≤ i+1 (covers all reals)
@@ -54,7 +52,7 @@ def iUnion {X : Type u} {ι : Type v} (s : ι → Set X) : Set X := fun x => ∃
 -- (⋂ halflines) x = ∀ i, halflines i x = ∀ i, x ≥ i (only satisfied by no real number)
 def iInter {X : Type u} {ι : Type v} (s : ι → Set X) : Set X := fun x => ∀ i : ι, s i x
 
-protected def Mem (s : Set α) (a : α) : Prop := s a
+def Mem (s : Set α) (a : α) : Prop := s a
 
 instance : Membership α (Set α) := ⟨Set.Mem⟩
 
