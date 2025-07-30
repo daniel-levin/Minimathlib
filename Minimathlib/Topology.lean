@@ -30,10 +30,9 @@ theorem isClosed_univ : isClosed (𝒰 : Set X) := by
 open TopologicalSpace
 
 theorem isClosed_iInter : ∀ {ι : Type u} (s : ι → Set X), (∀ i, isClosed (s i)) → isClosed (⋂ s) := by
-  intro ι s h
   unfold isClosed
+  intro ι s h
   rw [Set.compl_iInter]
-  apply isOpen_union
   assumption
 
 theorem isClosed_union : ∀ s t : Set X, isClosed s → isClosed t → isClosed (s ∪ t) := by

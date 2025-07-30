@@ -36,12 +36,12 @@ def compl {X : Type u} (s : Set X) : Set X := fun x => ¬s x
 -- Indexed union: element is in at least one set from the family
 -- Example: if intervals i := fun x => i ≤ x ∧ x ≤ i+1, then
 -- (⋃ intervals) x = ∃ i, intervals i x = ∃ i, i ≤ x ∧ x ≤ i+1 (covers all reals)
-def iUnion {X : Type u} {ι : Type u} (s : ι → Set X) : Set X := fun x => ∃ i, s i x
+def iUnion {X : Type u} {ι : Type u} (s : ι → Set X) : Set X := fun x => ∃ i : ι, s i x
 
 -- Indexed intersection: element is in all sets from the family
 -- Example: if halflines i := fun x => x ≥ i, then
 -- (⋂ halflines) x = ∀ i, halflines i x = ∀ i, x ≥ i (only satisfied by no real number)
-def iInter {X : Type u} {ι : Type u} (s : ι → Set X) : Set X := fun x => ∀ i, s i x
+def iInter {X : Type u} {ι : Type u} (s : ι → Set X) : Set X := fun x => ∀ i : ι, s i x
 
 protected def Mem (s : Set α) (a : α) : Prop := s a
 
@@ -54,6 +54,10 @@ infixl:65 " ∪ " => Set.union
 postfix:max "ᶜ" => Set.compl
 notation "⋃ " f => Set.iUnion f
 notation "⋂ " f => Set.iInter f
+notation "⋃[" i "] " f => Set.iUnion (fun i => f)
+notation "⋂[" i "] " f => Set.iInter (fun i => f)
+
+#check Set.iUnion
 
 -- Basic subset relation
 def subset (s t : Set X) : Prop := ∀ x, x ∈ s → x ∈ t
@@ -87,7 +91,7 @@ theorem compl_inter {X : Type u} (s t : Set X) : (s ∩ t)ᶜ = sᶜ ∪ tᶜ :=
 theorem compl_union {X : Type u} (s t : Set X) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ := by ode_to_grind
 
 -- De Morgan's laws for indexed unions and intersections
-theorem compl_iUnion {X : Type u} {ι : Type u} (s : ι → Set X) : (⋃ s)ᶜ = ⋂ (fun i => (s i)ᶜ) := by
+theorem compl_iUnion {X : Type u} {ι : Type u} (s : ι → Set X) : (⋃ s)ᶜ = ⋂[i] (s i)ᶜ := by
   apply ext
   intro x
   constructor
@@ -98,7 +102,7 @@ theorem compl_iUnion {X : Type u} {ι : Type u} (s : ι → Set X) : (⋃ s)ᶜ 
     -- h : ∀ i, ¬s i x, hi : s i x, goal: False
     exact h i hi
 
-theorem compl_iInter {X : Type u} {ι : Type u} (s : ι → Set X) : (⋂ s)ᶜ = ⋃ (fun i => (s i)ᶜ) := by
+theorem compl_iInter {X : Type u} {ι : Type u} (s : ι → Set X) : (⋂ s)ᶜ = ⋃[i] (s i)ᶜ := by
   apply ext
   intro x
   constructor
