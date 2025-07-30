@@ -10,6 +10,16 @@ variable {α : Type u}
 -- This corresponds to the "axiom of specification".
 def Set (X : Type u) : Type u := X → Prop
 
+example : Set Nat := fun n => n > 5
+
+example : Set (Nat × Nat) := fun ⟨m, n⟩ => m + n = 10
+
+example (α : Type u) : Set (List α) := fun xs => xs.length ≤ 3
+
+example : Set (Set Nat) := fun s => ∃ n, s = fun k => k < n
+
+example (P Q : Nat → Prop) : Set Nat := fun n => P n ∧ Q n
+
 namespace Set
 
 -- The empty set: no element satisfies the predicate
@@ -57,8 +67,6 @@ notation "⋃ " f => Set.iUnion f
 notation "⋂ " f => Set.iInter f
 notation "⋃[" i "] " f => Set.iUnion (fun i => f)
 notation "⋂[" i "] " f => Set.iInter (fun i => f)
-
-#check Set.iUnion
 
 -- Basic subset relation
 def subset (s t : Set X) : Prop := ∀ x, x ∈ s → x ∈ t
