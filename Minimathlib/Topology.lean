@@ -33,6 +33,7 @@ theorem isClosed_iInter : ∀ {ι : Type u} (s : ι → Set X), (∀ i, isClosed
   unfold isClosed
   intro ι s h
   rw [Set.compl_iInter]
+  apply isOpen_union
   assumption
 
 theorem isClosed_union : ∀ s t : Set X, isClosed s → isClosed t → isClosed (s ∪ t) := by
@@ -43,9 +44,10 @@ theorem isClosed_union : ∀ s t : Set X, isClosed s → isClosed t → isClosed
   repeat assumption
 
 -- Neighborhood definitions and properties
-def nhds (x : X) : Set (Set X) := fun s => ∃ t, isOpen t ∧ x ∈ t ∧ t ⊆ s
+def nhds (x : X) : Set (Set X) := fun S => ∃ T : Set X, isOpen T ∧ x ∈ T ∧ T ⊆ S
 
 theorem isOpen_iff_nhds : ∀ s : Set X, isOpen s ↔ ∀ x, x ∈ s → s ∈ nhds x := by
+  intro T
   sorry
 
 -- Closure (intersection of all closed supersets)
