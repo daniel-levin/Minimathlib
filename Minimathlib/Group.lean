@@ -103,29 +103,3 @@ theorem mul_inv_rev_term2 (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
 class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
   map: G → H
   homs: ∀ a b : G, map (a*b) = map a * map b
-
--- Infallible group simplification tactic
-macro "group_simp" : tactic =>
-  `(tactic| (
-    try rw [mul_inv]
-    try rw [inv_mul]
-    try rw [mul_one]
-    try rw [one_mul]
-    try rw [inv_inv]
-    try rw [mul_inv]
-    try rw [inv_mul]
-    try rw [mul_one]
-    try rw [one_mul]
-    try rfl
-    ))
-
--- Examples
-example (a : G) : a * e = a := by group_simp
-example (a : G) : e * a = a := by group_simp
-example (a : G) : a * a⁻¹ = e := by group_simp
-example (a : G) : a⁻¹ * a = e := by group_simp
-example (a : G) : (a⁻¹)⁻¹ = a := by group_simp
-
--- More complex example that requires multiple steps
-example (a b : G) : a * (b * b⁻¹) * a⁻¹ = e := by
-  group_simp
