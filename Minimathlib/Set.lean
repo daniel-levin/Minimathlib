@@ -81,12 +81,6 @@ example: 42 ∈ evens := by rfl
 private def div_by_fours : Set Nat := fun n => n % 4 == 0
 
 private theorem all_numbers_div_by_four_div_by_two : div_by_fours ⊆ evens := by
-  unfold div_by_fours evens
-  have h3: 4 = 2 * 2 := by trivial
-  rw [h3]
-  unfold subset
-  intro m nd4
-  simp
   sorry
 
 end Examples
