@@ -71,6 +71,38 @@ def subset (s t : Set X) : Prop := ∀ x, x ∈ s → x ∈ t
 
 infixl:50 " ⊆ " => subset
 
+namespace Examples
+
+private def evens : Set Nat := λ n => n % 2 == 0
+
+example: 2 ∈ evens := by rfl
+example: 42 ∈ evens := by rfl
+
+private def div_by_fours : Set Nat := fun n => n % 4 == 0
+
+private theorem all_numbers_div_by_four_div_by_two : div_by_fours ⊆ evens := by
+  unfold div_by_fours evens
+  have h3: 4 = 2 * 2 := by trivial
+  rw [h3]
+  unfold subset
+  intro m nd4
+  simp
+  sorry
+
+end Examples
+
+-- -- Examples using subset and membership notation
+-- example : (fun n => n % 2 = 0) ⊆ (fun n => n < 100 ∨ n % 2 = 0) := by
+--   intro x hx; right; exact hx
+
+-- example : 42 ∈ (fun n : Nat => n % 2 = 0) := by norm_num
+
+-- example : ∅ ⊆ (fun n : Nat => n > 0) := by
+--   intro x hx; exact False.elim hx
+
+-- example : (fun n : Nat => n < 5) ⊆ (fun n => n < 10) := by
+--   intro x hx; omega
+
 macro "ode_to_grind" : tactic =>
     `(tactic| (
       try unfold Set.compl
