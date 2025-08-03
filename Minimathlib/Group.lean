@@ -103,3 +103,20 @@ theorem mul_inv_rev_term2 (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
 class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
   map: G → H
   homs: ∀ a b : G, map (a*b) = map a * map b
+
+def is_abelian (G: Type u) [Group G]: Prop := ∀ a b : G, a * b = b * a
+
+example (G1 : Type u) [Group G1] (h: ∀ a : G1, a * a = e): is_abelian G1 := by
+  unfold is_abelian
+  have self_inverse: (p : G1) → p = p⁻¹ := by
+    intro p
+    have r := congrArg (. * p⁻¹) (h p)
+    simp at r
+    rw [mul_assoc, mul_inv, mul_one, one_mul] at r
+    assumption
+  intro a b
+  have useful_step: a * b  = (a*b)⁻¹ := self_inverse (a*b)
+  rw [useful_step, mul_inv_rev]
+  congr
+  rw [← self_inverse]
+  rw [← self_inverse]
