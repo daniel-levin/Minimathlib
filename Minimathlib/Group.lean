@@ -16,8 +16,14 @@ class Abelian (G: Type u) extends Group G where
 open Group
 variable {G: Type u} [Group G]
 
+def lmul (a : G) {b c : G} (h : b = c) : a*b = a*c := by
+  rw [h]
+
+def rmul {b c : G} (h : b = c) (a : G)  : b*a = c*a := by
+  rw [h]
+
 theorem inv_inv (a : G): (a⁻¹)⁻¹ = a := by
-  have term := congrArg (a*.) (mul_inv a⁻¹)
+  have term := lmul a (mul_inv a⁻¹)
   simp at term
   rw [← @mul_assoc, @mul_inv, @mul_one, @one_mul] at term
   exact term
@@ -30,14 +36,14 @@ theorem inv_mul (a : G): a⁻¹ * a = e := by
 section rotman_lemma_2_16
 
 theorem right_cancellation_law (a b x: G) (h: a * x = b * x): a = b := by
-  have p := congrArg (. * x⁻¹) h
+  have p := rmul h x⁻¹
   simp at p
   repeat rw [mul_assoc] at p
   rw [mul_inv, @mul_one, mul_one] at p
   assumption
 
 theorem left_cancellation_law (a b x: G) (h: x * a = x * b): a = b := by
-  have p := congrArg (x⁻¹ * .) h
+  have p := lmul x⁻¹ h
   simp at p
   repeat rw [← mul_assoc] at p
   rw [inv_mul, one_mul, one_mul] at p
@@ -66,8 +72,9 @@ theorem identity_unique4 (d : G) (h1 : ∀ x : G, d * x = x): d = e := by
 
 end rotman_lemma_2_16
 
+/-- Rotman: exercise 2.21 --/
 theorem no_nonidentity_self_square (a : G) (h: a*a = a): a = e := by
-  have l := congrArg (. * a⁻¹) h
+  have l := rmul h a⁻¹
   simp at l
   rw [mul_assoc, mul_inv, mul_one] at l
   assumption
@@ -87,18 +94,18 @@ theorem mul_inv_rev_term (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
       = e                     := mul_inv (a * b)
     _ = (a * b) * (b⁻¹ * a⁻¹) := Eq.symm (calc (a * b) * (b⁻¹ * a⁻¹)
         = a * (b * (b⁻¹ * a⁻¹))     := mul_assoc a b (b⁻¹ * a⁻¹)
-      _ = a * (b * b⁻¹ * a⁻¹)       := congrArg (a * ·) (Eq.symm (mul_assoc b b⁻¹ a⁻¹))
-      _ = a * (e * a⁻¹)             := congrArg (a * ·) (congrArg (· * a⁻¹) (mul_inv b))
-      _ = a * a⁻¹                   := congrArg (a * ·) (one_mul a⁻¹)
+      _ = a * (b * b⁻¹ * a⁻¹)       := lmul a (Eq.symm (mul_assoc b b⁻¹ a⁻¹))
+      _ = a * (e * a⁻¹)             := lmul a (rmul (mul_inv b) a⁻¹)
+      _ = a * a⁻¹                   := lmul a (one_mul a⁻¹)
       _ = e                         := mul_inv a))
 
 -- Another term-mode proof of the same theorem
 theorem mul_inv_rev_term2 (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
   left_cancellation_law _ _ (a * b) (Eq.trans (mul_inv (a * b)) (Eq.symm
     (Eq.trans (mul_assoc a b (b⁻¹ * a⁻¹))
-    (Eq.trans (congrArg (a * ·) (Eq.symm (mul_assoc b b⁻¹ a⁻¹)))
-    (Eq.trans (congrArg (a * ·) (congrArg (· * a⁻¹) (mul_inv b)))
-    (Eq.trans (congrArg (a * ·) (one_mul a⁻¹)) (mul_inv a)))))))
+    (Eq.trans (lmul a (Eq.symm (mul_assoc b b⁻¹ a⁻¹)))
+    (Eq.trans (lmul a (rmul (mul_inv b) a⁻¹))
+    (Eq.trans (lmul a (one_mul a⁻¹)) (mul_inv a)))))))
 
 class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
   map: G → H
@@ -106,12 +113,12 @@ class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
 
 def is_abelian (G: Type u) [Group G]: Prop := ∀ a b : G, a * b = b * a
 
+/-- Rotman Exercise 2.26 --/
 example (G1 : Type u) [Group G1] (h: ∀ a : G1, a * a = e): is_abelian G1 := by
   unfold is_abelian
   have self_inverse: (p : G1) → p = p⁻¹ := by
     intro p
-    have r := congrArg (. * p⁻¹) (h p)
-    simp at r
+    have r := rmul (h p) p⁻¹
     rw [mul_assoc, mul_inv, mul_one, one_mul] at r
     assumption
   intro a b
