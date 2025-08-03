@@ -115,8 +115,4 @@ example (G1 : Type u) [Group G1] (h: ∀ a : G1, a * a = e): is_abelian G1 := by
     rw [mul_assoc, mul_inv, mul_one, one_mul] at r
     assumption
   intro a b
-  have useful_step: a * b  = (a*b)⁻¹ := self_inverse (a*b)
-  rw [useful_step, mul_inv_rev]
-  congr
-  rw [← self_inverse]
-  rw [← self_inverse]
+  rw [self_inverse (a*b), mul_inv_rev, self_inverse a⁻¹, self_inverse b⁻¹, inv_inv, inv_inv]
