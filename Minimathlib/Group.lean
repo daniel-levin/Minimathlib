@@ -2,7 +2,7 @@ universe u v
 
 -- Reference: Advanced Modern Algebra - Rotman
 
-class Group (G: Type u) extends Mul G, Inv G where
+class Group (G: Type u) extends Mul G, Inv G, NatPow G where
   -- Following Rotman's convention we denote the identity as e
   e: G
   mul_assoc: ∀ a b c : G, (a * b) * c = a * (b * c)
@@ -15,6 +15,13 @@ class Abelian (G: Type u) extends Group G where
 
 open Group
 variable {G: Type u} [Group G]
+
+-- check that power notation works
+example (a : G) (n : Nat): a^n = a^n := by rfl
+
+-- check that we inherit sane properties
+example (a : G) (n m : Nat): a^(n+m) = a^n * a^m := by
+  sorry -- annoyingly exact? won't close this!
 
 def lmul (a : G) {b c : G} (h : b = c) : a*b = a*c := by
   rw [h]
