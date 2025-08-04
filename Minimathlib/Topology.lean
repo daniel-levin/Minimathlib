@@ -15,26 +15,27 @@ class TopologicalSpace (X : Type u) where
 
 variable {X : Type u} [TopologicalSpace X]
 
-def is_nhd (x : X) (U : Set X) (_: TopologicalSpace.isOpen U) := x ∈ U
+open TopologicalSpace
+
+def is_nhd (x : X) (U : Set X) (_: isOpen U) := x ∈ U
 
 theorem univ_nhd_any_pt (x : X): is_nhd x 𝒰 _? := by trivial
 
 theorem empty_nhd_of_no_pt (x : X): ¬is_nhd x ∅ _? := by
   exact fun a => a
 
-def isClosed (s : Set X) : Prop := @TopologicalSpace.isOpen X _ (sᶜ)
+def isClosed (s : Set X) : Prop := @isOpen X _ (sᶜ)
 
 theorem isClosed_empty : isClosed (∅ : Set X) := by
   unfold isClosed
   rw [@Set.compl_empty]
-  exact TopologicalSpace.isOpen_univ
+  exact isOpen_univ
 
 theorem isClosed_univ : isClosed (𝒰 : Set X) := by
   unfold isClosed
   rw [@Set.compl_univ]
-  exact TopologicalSpace.isOpen_empty
+  exact isOpen_empty
 
-open TopologicalSpace
 
 theorem isClosed_iInter : ∀ {ι : Type u} (s : ι → Set X), (∀ i, isClosed (s i)) → isClosed (⋂ s) := by
   unfold isClosed
@@ -92,7 +93,7 @@ def preimage {Y : Type u} (f : X → Y) (s : Set Y) : Set X := fun x => s (f x)
 
 -- Continuity
 def continuous {Y : Type u} [TopologicalSpace Y] (f : X → Y) : Prop :=
-  ∀ s : Set Y, @TopologicalSpace.isOpen Y _ s → isOpen (preimage f s)
+  ∀ s : Set Y, @isOpen Y _ s → isOpen (preimage f s)
 
 theorem continuous_comp {Y Z : Type u} [TopologicalSpace Y] [TopologicalSpace Z]
   (f : X → Y) (g : Y → Z) : continuous f → continuous g → continuous (fun x => g (f x)) := by
