@@ -17,9 +17,15 @@ variable {X : Type u} [TopologicalSpace X]
 
 open TopologicalSpace
 
+def open_sets (TS: Type u) [TopologicalSpace TS] := { S : Set TS // isOpen S}
+
+theorem abc (S : open_sets X) : True := by sorry
+
 def is_nhd (x : X) (U : Set X) (_: isOpen U) := x ∈ U
 
 theorem univ_nhd_any_pt (x : X): is_nhd x 𝒰 _? := by trivial
+
+example : True := by trivial
 
 theorem empty_nhd_of_no_pt (x : X): ¬is_nhd x ∅ _? := by
   exact fun a => a
