@@ -17,9 +17,9 @@ variable {X : Type u} [TopologicalSpace X]
 
 open TopologicalSpace
 
-def open_sets (TS: Type u) [TopologicalSpace TS] := { S : Set TS // isOpen S}
+def open_sets := { S : Set X // isOpen S}
 
-theorem abc (S : open_sets X) : True := by sorry
+theorem abc (S : open_sets) : True := by sorry
 
 def is_nhd (x : X) (U : Set X) (_: isOpen U) := x ∈ U
 
