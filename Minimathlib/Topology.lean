@@ -21,9 +21,9 @@ def open_sets (TS: Type u) [TopologicalSpace TS] := { S : Set TS // isOpen S}
 
 def is_nhd (x : X) (U : open_sets X) := x ∈ U.val
 
-theorem univ_nhd_any_pt (x : X): is_nhd x ⟨𝒰, isOpen_univ⟩ := by trivial
+theorem univ_nhd_any_pt (x : X): is_nhd x ⟨𝒰, _?⟩ := by trivial
 
-theorem empty_nhd_of_no_pt (x : X): ¬is_nhd x ⟨∅, isOpen_empty⟩ := by
+theorem empty_nhd_of_no_pt (x : X): ¬is_nhd x ⟨∅, _?⟩ := by
   exact fun a => a
 
 def isClosed (s : Set X) : Prop := @isOpen X _ (sᶜ)
