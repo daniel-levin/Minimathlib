@@ -15,10 +15,12 @@ class TopologicalSpace (X : Type u) where
 
 variable {X : Type u} [TopologicalSpace X]
 
-def is_nhd (x : X) (U : Set X) := TopologicalSpace.isOpen U → x ∈ U
+def is_nhd (x : X) (U : Set X) (_: TopologicalSpace.isOpen U) := x ∈ U
 
-theorem univ_nhd_any_pt (x : X): is_nhd x 𝒰 := by
-  exact fun a => trivial
+theorem univ_nhd_any_pt (x : X): is_nhd x 𝒰 _? := by trivial
+
+theorem empty_nhd_of_no_pt (x : X): ¬is_nhd x ∅ _? := by
+  exact fun a => a
 
 def isClosed (s : Set X) : Prop := @TopologicalSpace.isOpen X _ (sᶜ)
 
