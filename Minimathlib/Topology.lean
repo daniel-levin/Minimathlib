@@ -15,6 +15,11 @@ class TopologicalSpace (X : Type u) where
 
 variable {X : Type u} [TopologicalSpace X]
 
+def is_nhd (x : X) (U : Set X) := TopologicalSpace.isOpen U → x ∈ U
+
+theorem univ_nhd_any_pt (x : X): is_nhd x 𝒰 := by
+  exact fun a => trivial
+
 def isClosed (s : Set X) : Prop := @TopologicalSpace.isOpen X _ (sᶜ)
 
 theorem isClosed_empty : isClosed (∅ : Set X) := by
@@ -46,8 +51,7 @@ theorem isClosed_union : ∀ s t : Set X, isClosed s → isClosed t → isClosed
 -- Neighborhood definitions and properties
 def nhds (x : X) : Set (Set X) := fun S => ∃ T : Set X, isOpen T ∧ x ∈ T ∧ T ⊆ S
 
-theorem isOpen_iff_nhds : ∀ s : Set X, isOpen s ↔ ∀ x, x ∈ s → s ∈ nhds x := by
-  intro T
+theorem isOpen_iff_nhds (S : Set X): isOpen S ↔ ∀ x, x ∈ S → S ∈ nhds x := by
   sorry
 
 -- Closure (intersection of all closed supersets)
