@@ -19,7 +19,9 @@ open TopologicalSpace
 
 def open_sets (TS: Type u) [TopologicalSpace TS] := { S : Set TS // isOpen S}
 
-def is_nhd (x : X) (U : open_sets X) := x ∈ U.val
+notation "𝒯(" T ")" => open_sets T
+
+def is_nhd (x : X) (U : 𝒯(X)) := x ∈ U.val
 
 theorem univ_nhd_any_pt (x : X): is_nhd x ⟨𝒰, _?⟩ := by trivial
 
