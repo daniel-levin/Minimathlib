@@ -60,8 +60,9 @@ def nhds (x : X) : Set (Set X) := fun S => ∃ T : Set X, isOpen T ∧ x ∈ T �
 
 def nhds_strong_type (x : X) : Set 𝒯(X) := fun S => ∃ T : 𝒯(X), x ∈ T.val ∧ T.val ⊆ S.val
 
+notation "𝒩(" x ")" => nhds_strong_type x
 
-theorem isOpen_iff_nhds (S : Set X): isOpen S ↔ (∀ x, x ∈ S → ∃ Ux : 𝒯(X), x ∈ Ux.val) := by
+theorem isOpen_iff_nhds (S : Set X): isOpen S ↔ (∀ x, x ∈ S → ∃ Nₓ ∈ 𝒩(x), Nₓ.val ⊆ S) := by
   sorry
 
 -- Closure (intersection of all closed supersets)
