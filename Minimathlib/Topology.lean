@@ -63,7 +63,25 @@ def nhds_strong_type (x : X) : Set 𝒯(X) := fun S => ∃ T : 𝒯(X), x ∈ T.
 notation "𝒩(" x ")" => nhds_strong_type x
 
 theorem isOpen_iff_nhds (S : Set X): isOpen S ↔ (∀ x, x ∈ S → ∃ Nₓ ∈ 𝒩(x), Nₓ.val ⊆ S) := by
-  sorry
+  constructor
+  · -- Forward direction: if S is open, then for any x ∈ S, S itself is a suitable neighborhood
+    intro hopen x hx
+    -- We'll use ⟨S, hopen⟩ as our neighborhood
+    exists ⟨S, hopen⟩
+    constructor
+    · -- Show ⟨S, hopen⟩ ∈ 𝒩(x)
+      unfold nhds_strong_type
+      -- Need to show: ∃ T : 𝒯(X), x ∈ T.val ∧ T.val ⊆ S
+      exists ⟨S, hopen⟩
+      constructor
+      · exact hx  -- x ∈ S
+      · exact fun _ h => h  -- S ⊆ S
+    · -- Show ⟨S, hopen⟩.val ⊆ S
+      unfold Set.subset
+      simp
+  · -- Reverse direction: if every point has a neighborhood contained in S, then S is open
+    intro h
+    sorry
 
 -- Closure (intersection of all closed supersets)
 def closure (s : Set X) : Set X := fun x => ∀ t, isClosed t → s ⊆ t → x ∈ t
