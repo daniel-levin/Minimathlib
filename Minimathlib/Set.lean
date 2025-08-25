@@ -73,6 +73,11 @@ infixl:50 " ⊆ " => subset
 
 namespace Examples
 
+-- One might ask why we don't use subtypes to represent sets.
+-- It turns out that they're equivalent.
+
+example (p : Set α) (h1: {a : α // p a}) : p h1.val := h1.property
+
 private def evens : Set Nat := λ n => n % 2 == 0
 
 example: 2 ∈ evens := by rfl

@@ -90,6 +90,12 @@ def closure (s : Set X) : Set X := fun x => ∀ t, isClosed t → s ⊆ t → x 
 def interior (s : Set X) : Set X := fun x => ∃ t, isOpen t ∧ t ⊆ s ∧ x ∈ t
 
 theorem closure_closed : ∀ s : Set X, isClosed (closure s) := by
+  intro s
+  unfold isClosed
+  unfold closure
+  unfold Set.compl
+  simp
+  unfold isClosed Set.compl
   sorry
 
 theorem interior_open : ∀ s : Set X, isOpen (interior s) := by
