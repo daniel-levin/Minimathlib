@@ -2,7 +2,7 @@ universe u v
 
 -- Reference: Advanced Modern Algebra - Rotman
 
-class Group (G: Type u) extends Mul G, Inv G, NatPow G where
+class Group (G: Type u) extends Mul G, Inv G where
   -- Following Rotman's convention we denote the identity as e
   e: G
   mul_assoc: ∀ a b c : G, (a * b) * c = a * (b * c)
@@ -10,18 +10,30 @@ class Group (G: Type u) extends Mul G, Inv G, NatPow G where
   one_mul: ∀ a : G, e * a = a
   mul_inv: ∀ a : G, a * a⁻¹ = e
 
+open Group
+
+variable {G: Type u} [Group G]
+
 class Abelian (G: Type u) extends Group G where
   mul_comm: ∀ a b : G, a * b = b * a
 
-open Group
-variable {G: Type u} [Group G]
+def gpow (a : G) : Nat → G
+  | 0     => e
+  | n + 1 => gpow a n * a
+
+instance : NatPow G := ⟨gpow⟩
+
+theorem npow_zero (a : G) : a ^ 0 = e := rfl
+theorem npow_succ (a : G) (n : Nat) : a ^ (n + 1) = a ^ n * a := rfl
 
 -- check that power notation works
 example (a : G) (n : Nat): a^n = a^n := by rfl
 
 -- check that we inherit sane properties
 example (a : G) (n m : Nat): a^(n+m) = a^n * a^m := by
-  sorry -- annoyingly exact? won't close this!
+  induction m with
+  | zero => rw [Nat.add_zero, npow_zero, mul_one]
+  | succ k ih => rw [← Nat.add_assoc, npow_succ, npow_succ, ih, mul_assoc]
 
 def lmul (a : G) {b c : G} (h : b = c) : a*b = a*c := by
   rw [h]
