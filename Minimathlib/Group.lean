@@ -1,8 +1,6 @@
-universe u v
-
 -- Reference: Advanced Modern Algebra - Rotman
 
-class Group (G: Type u) extends Mul G, Inv G where
+class Group (G: Type _) extends Mul G, Inv G where
   -- Following Rotman's convention we denote the identity as e
   e: G
   mul_assoc: ∀ a b c : G, (a * b) * c = a * (b * c)
@@ -12,9 +10,9 @@ class Group (G: Type u) extends Mul G, Inv G where
 
 open Group
 
-variable {G: Type u} [Group G]
+variable {G: Type _} [Group G]
 
-class Abelian (G: Type u) extends Group G where
+class Abelian (G: Type _) extends Group G where
   mul_comm: ∀ a b : G, a * b = b * a
 
 def gpow (a : G) : Nat → G
@@ -41,51 +39,50 @@ def lmul (a : G) {b c : G} (h : b = c) : a*b = a*c := by
 def rmul {b c : G} (h : b = c) (a : G)  : b*a = c*a := by
   rw [h]
 
-theorem inv_inv (a : G): (a⁻¹)⁻¹ = a := by
+variable (a b c d : G)
+
+theorem inv_inv : (a⁻¹)⁻¹ = a := by
   have h := lmul a (mul_inv a⁻¹)
   rwa [mul_one, ← mul_assoc, mul_inv, one_mul] at h
 
-theorem inv_mul (a : G): a⁻¹ * a = e := by
+theorem inv_mul : a⁻¹ * a = e := by
   have l := mul_inv a⁻¹
   rwa [inv_inv] at l
 
--- A simp set for routine group equalities. `mul_assoc` orients every product
--- to the right; the two cancel lemmas then delete any adjacent inverse pair,
--- so simp normalises both sides of a goal and closes it.
 attribute [simp] Group.mul_assoc Group.mul_one Group.one_mul Group.mul_inv
 attribute [simp] inv_inv inv_mul
 
-@[simp] theorem mul_inv_cancel_left (a b : G) : a * (a⁻¹ * b) = b := by
+@[simp] theorem mul_inv_cancel_left : a * (a⁻¹ * b) = b := by
   rw [← mul_assoc, mul_inv, one_mul]
 
-@[simp] theorem inv_mul_cancel_left (a b : G) : a⁻¹ * (a * b) = b := by
+@[simp] theorem inv_mul_cancel_left : a⁻¹ * (a * b) = b := by
   rw [← mul_assoc, inv_mul, one_mul]
 
 section rotman_lemma_2_16
 
-theorem right_cancellation_law (a b x: G) (h: a * x = b * x): a = b := by
-  simpa using rmul h x⁻¹
+theorem right_cancellation_law (h: a * c = b * c): a = b := by
+  simpa using rmul h c⁻¹
 
-theorem left_cancellation_law (a b x: G) (h: x * a = x * b): a = b := by
-  simpa using lmul x⁻¹ h
+theorem left_cancellation_law (h: c * a = c * b): a = b := by
+  simpa using lmul c⁻¹ h
 
 -- The element e is the unique element in G with e ∗ x = x = x ∗ e for all x ∈ G.
-theorem identity_unique (d : G) (h : ∀ x : G, d * x = x ∧ x * d = x) : d = e := by
+theorem identity_unique (h : ∀ x : G, d * x = x ∧ x * d = x) : d = e := by
     have : d * e = e := (h e).1
     rw [mul_one] at this
     exact this
 
-theorem identity_unique2 (d : G) (h: ∀ x : G, d * x = x ∧ x * d = x) : d = e := by
+example (h: ∀ x : G, d * x = x ∧ x * d = x) : d = e := by
   have k := (h e).1
   rw [mul_one] at k
   exact k
 
-theorem identity_unique3 (d : G) (h1 : ∀ x : G, d * x = x): d = e := by
+example (h1 : ∀ x : G, d * x = x): d = e := by
   have k := (h1 e)
   rw [mul_one] at k
   exact k
 
-theorem identity_unique4 (d : G) (h1 : ∀ x : G, d * x = x): d = e := by
+example (h1 : ∀ x : G, d * x = x): d = e := by
   have k := (h1 e)
   rw [mul_one] at k
   assumption
@@ -93,19 +90,15 @@ theorem identity_unique4 (d : G) (h1 : ∀ x : G, d * x = x): d = e := by
 end rotman_lemma_2_16
 
 /-- Rotman: exercise 2.21 --/
-theorem no_nonidentity_self_square (a : G) (h: a*a = a): a = e := by
+theorem no_nonidentity_self_square (h: a*a = a): a = e := by
   simpa using rmul h a⁻¹
 
-theorem no_nonidentity_self_square2 (a : G): a * a = a → a = e := by
-  intro h
-  exact no_nonidentity_self_square a h
-
-theorem mul_inv_rev (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
+theorem mul_inv_rev : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
   apply left_cancellation_law _ _ (a * b)
   simp
 
 -- Term-mode proof of the same theorem
-theorem mul_inv_rev_term (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
+theorem mul_inv_rev_term : (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
   left_cancellation_law _ _ (a * b)
     (calc (a * b) * (a * b)⁻¹
       = e                     := mul_inv (a * b)
@@ -117,21 +110,21 @@ theorem mul_inv_rev_term (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
       _ = e                         := mul_inv a))
 
 -- Another term-mode proof of the same theorem
-theorem mul_inv_rev_term2 (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
+example: (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
   left_cancellation_law _ _ (a * b) (Eq.trans (mul_inv (a * b)) (Eq.symm
     (Eq.trans (mul_assoc a b (b⁻¹ * a⁻¹))
     (Eq.trans (lmul a (Eq.symm (mul_assoc b b⁻¹ a⁻¹)))
     (Eq.trans (lmul a (rmul (mul_inv b) a⁻¹))
     (Eq.trans (lmul a (one_mul a⁻¹)) (mul_inv a)))))))
 
-class Hom (G: Type u) (H: Type v) [Group G] [Group H] where
+class Hom (G: Type _) (H: Type _) [Group G] [Group H] where
   map: G → H
   homs: ∀ a b : G, map (a*b) = map a * map b
 
-def is_abelian (G: Type u) [Group G]: Prop := ∀ a b : G, a * b = b * a
+def is_abelian (G: Type _) [Group G]: Prop := ∀ a b : G, a * b = b * a
 
 /-- Rotman Exercise 2.26 --/
-example (G1 : Type u) [Group G1] (h: ∀ a : G1, a * a = e): is_abelian G1 := by
+example (G1 : Type _) [Group G1] (h: ∀ a : G1, a * a = e): is_abelian G1 := by
   unfold is_abelian
   have self_inverse: (p : G1) → p = p⁻¹ := by
     intro p
