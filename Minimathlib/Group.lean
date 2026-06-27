@@ -42,31 +42,22 @@ def rmul {b c : G} (h : b = c) (a : G)  : b*a = c*a := by
   rw [h]
 
 theorem inv_inv (a : G): (a⁻¹)⁻¹ = a := by
-  have term := lmul a (mul_inv a⁻¹)
-  simp at term
-  rw [← @mul_assoc, @mul_inv, @mul_one, @one_mul] at term
-  exact term
+  have h := lmul a (mul_inv a⁻¹)
+  rwa [mul_one, ← mul_assoc, mul_inv, one_mul] at h
 
 theorem inv_mul (a : G): a⁻¹ * a = e := by
   have l := mul_inv a⁻¹
-  rw [inv_inv] at l
-  assumption
+  rwa [inv_inv] at l
 
 section rotman_lemma_2_16
 
 theorem right_cancellation_law (a b x: G) (h: a * x = b * x): a = b := by
   have p := rmul h x⁻¹
-  simp at p
-  repeat rw [mul_assoc] at p
-  rw [mul_inv, @mul_one, mul_one] at p
-  assumption
+  rwa [mul_assoc, mul_assoc, mul_inv, mul_one, mul_one] at p
 
 theorem left_cancellation_law (a b x: G) (h: x * a = x * b): a = b := by
   have p := lmul x⁻¹ h
-  simp at p
-  repeat rw [← mul_assoc] at p
-  rw [inv_mul, one_mul, one_mul] at p
-  assumption
+  rwa [← mul_assoc, ← mul_assoc, inv_mul, one_mul, one_mul] at p
 
 -- The element e is the unique element in G with e ∗ x = x = x ∗ e for all x ∈ G.
 theorem identity_unique (d : G) (h : ∀ x : G, d * x = x ∧ x * d = x) : d = e := by
@@ -94,9 +85,7 @@ end rotman_lemma_2_16
 /-- Rotman: exercise 2.21 --/
 theorem no_nonidentity_self_square (a : G) (h: a*a = a): a = e := by
   have l := rmul h a⁻¹
-  simp at l
-  rw [mul_assoc, mul_inv, mul_one] at l
-  assumption
+  rwa [mul_assoc, mul_inv, mul_one] at l
 
 theorem no_nonidentity_self_square2 (a : G): a * a = a → a = e := by
   intro h
