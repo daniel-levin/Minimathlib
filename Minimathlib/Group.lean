@@ -49,15 +49,25 @@ theorem inv_mul (a : G): a⁻¹ * a = e := by
   have l := mul_inv a⁻¹
   rwa [inv_inv] at l
 
+-- A simp set for routine group equalities. `mul_assoc` orients every product
+-- to the right; the two cancel lemmas then delete any adjacent inverse pair,
+-- so simp normalises both sides of a goal and closes it.
+attribute [simp] Group.mul_assoc Group.mul_one Group.one_mul Group.mul_inv
+attribute [simp] inv_inv inv_mul
+
+@[simp] theorem mul_inv_cancel_left (a b : G) : a * (a⁻¹ * b) = b := by
+  rw [← mul_assoc, mul_inv, one_mul]
+
+@[simp] theorem inv_mul_cancel_left (a b : G) : a⁻¹ * (a * b) = b := by
+  rw [← mul_assoc, inv_mul, one_mul]
+
 section rotman_lemma_2_16
 
 theorem right_cancellation_law (a b x: G) (h: a * x = b * x): a = b := by
-  have p := rmul h x⁻¹
-  rwa [mul_assoc, mul_assoc, mul_inv, mul_one, mul_one] at p
+  simpa using rmul h x⁻¹
 
 theorem left_cancellation_law (a b x: G) (h: x * a = x * b): a = b := by
-  have p := lmul x⁻¹ h
-  rwa [← mul_assoc, ← mul_assoc, inv_mul, one_mul, one_mul] at p
+  simpa using lmul x⁻¹ h
 
 -- The element e is the unique element in G with e ∗ x = x = x ∗ e for all x ∈ G.
 theorem identity_unique (d : G) (h : ∀ x : G, d * x = x ∧ x * d = x) : d = e := by
@@ -84,8 +94,7 @@ end rotman_lemma_2_16
 
 /-- Rotman: exercise 2.21 --/
 theorem no_nonidentity_self_square (a : G) (h: a*a = a): a = e := by
-  have l := rmul h a⁻¹
-  rwa [mul_assoc, mul_inv, mul_one] at l
+  simpa using rmul h a⁻¹
 
 theorem no_nonidentity_self_square2 (a : G): a * a = a → a = e := by
   intro h
@@ -93,7 +102,7 @@ theorem no_nonidentity_self_square2 (a : G): a * a = a → a = e := by
 
 theorem mul_inv_rev (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
   apply left_cancellation_law _ _ (a * b)
-  rw [mul_inv, ← mul_assoc, mul_assoc a, mul_inv, mul_one, mul_inv]
+  simp
 
 -- Term-mode proof of the same theorem
 theorem mul_inv_rev_term (a b : G): (a * b)⁻¹ = b⁻¹ * a⁻¹ :=
@@ -126,8 +135,6 @@ example (G1 : Type u) [Group G1] (h: ∀ a : G1, a * a = e): is_abelian G1 := by
   unfold is_abelian
   have self_inverse: (p : G1) → p = p⁻¹ := by
     intro p
-    have r := rmul (h p) p⁻¹
-    rw [mul_assoc, mul_inv, mul_one, one_mul] at r
-    assumption
+    simpa using rmul (h p) p⁻¹
   intro a b
   rw [self_inverse (a*b), mul_inv_rev, self_inverse a⁻¹, self_inverse b⁻¹, inv_inv, inv_inv]
