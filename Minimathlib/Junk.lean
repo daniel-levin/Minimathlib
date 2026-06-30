@@ -23,8 +23,8 @@ def must_be_zero: S := S.mk 0 Nat.zero_le
 
 #check must_be_zero
 
-instance (s : S): P Nat where
-  a := s.number
+instance : P Nat where
+  a := must_be_zero.number
 
 class Q {β : Type u} where
   a : β
